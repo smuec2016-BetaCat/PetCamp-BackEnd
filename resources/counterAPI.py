@@ -14,4 +14,12 @@ class CounterAPI(Resource):
         visit = Counter(date_time=current_datetime)
         db.session.add(visit)
         db.session.commit()
-        return {"insert_time": current_datetime.strftime("%Y-%m-%d %H:%M:%S")}, 200, {"Access-Control-Allow-Origin": "*"}
+        return {
+                   "insert_time": current_datetime.strftime("%Y-%m-%d %H:%M:%S")
+               }, 200, {"Access-Control-Allow-Origin": "*"}
+
+    @staticmethod
+    def delete():
+        deleted_rows = Counter.query.delete()
+        db.session.commit()
+        return {"deleted_rows": deleted_rows}, 200, {"Access-Control-Allow-Origin": "*"}
