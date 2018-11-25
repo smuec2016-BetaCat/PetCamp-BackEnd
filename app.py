@@ -18,4 +18,4 @@ with app.app_context():
 api.add_resource(CounterAPI, "/api/v0/counter")
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0")
+    app.run(host="0.0.0.0", debug="true")
