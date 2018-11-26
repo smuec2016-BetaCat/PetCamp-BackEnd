@@ -10,7 +10,7 @@ class User(db.Model):
     """
     id = db.Column(db.Integer, autoincrement=True, nullable=False, primary_key=True, unique=True)
     username = db.Column(db.VARCHAR(20), nullable=False)
-    password_hash = db.Column(db.VARCHAR(20), nullable=False)
+    password_hash = db.Column(db.CHAR(120), nullable=False)
     create_time = db.Column(db.DateTime, nullable=False)
 
     def hash_password(self, password):
@@ -18,7 +18,7 @@ class User(db.Model):
         Save the hash password
         :param password: origin password
         """
-        self.password_hash = custom_app_context.encrypt(password)
+        self.password_hash = custom_app_context.hash(str(password))
 
     def verify_password(self, password):
         """
@@ -35,7 +35,7 @@ class User(db.Model):
         :return: the signature
         """
         serializer = TimedJSONWebSignatureSerializer(SECRET_KEY, expiration)
-        return serializer.dumps({"id", self.id})
+        return serializer.dumps({"id": self.id}).decode("utf-8")
 
     @staticmethod
     def verify_token(token):
@@ -46,9 +46,9 @@ class User(db.Model):
         """
         serializer = TimedJSONWebSignatureSerializer(SECRET_KEY)
         try:
-            data = serializer.loads(token)
-        except SignatureExpired as e:
-            return {"error": str(e)}
-        except BadSignature as e:
-            return {"error": str(e)}
+            data = serializer.loads(bytes(token, encoding="utf-8"))
+        except SignatureExpired:
+            return None
+        except BadSignature:
+            return None
         return User.query.get(data["id"])

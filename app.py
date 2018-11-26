@@ -16,7 +16,9 @@ db.init_app(app)
 with app.app_context():
     db.create_all()
 
+
 api.add_resource(counterAPI.CounterAPI, "/api/v0/counter")
+api.add_resource(registerAPI.RegisterAPI, "/api/v0/register")
 api.add_resource(authAPI.AuthAPI, "/api/v0/auth")
 
 if __name__ == '__main__':

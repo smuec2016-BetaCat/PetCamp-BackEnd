@@ -1,9 +1,21 @@
-from flask import request
+from flask import request, g
+from flask_httpauth import HTTPTokenAuth
 from flask_restful import Resource
-from models.user import User, db
-import datetime
+from models.user import User
 
 acao = {"Access-Control-Allow-Origin": "*"}
+auth = HTTPTokenAuth()
+
+
+@auth.verify_token
+def verify_token(token):
+    """
+    Verify the token
+    :param token: given token
+    :return: bool
+    """
+    g.current_user = User.verify_token(token)
+    return g.current_user is not None
 
 
 class AuthAPI(Resource):
@@ -13,15 +25,15 @@ class AuthAPI(Resource):
     @staticmethod
     def post():
         """
-        Register
-        :return: success or error message
+        Login in
+        :return: token or error message
         """
         username = request.json.get("username")
         password = request.json.get("password")
-        if User.query.filter_by(username=username).first() is not None:
-            return {"error": "User name has already been taken."}, 400, acao
-        user = User(username=username, create_time=datetime.datetime.now())
-        user.hash_password(password)
-        db.session.add(user)
-        db.session.commit()
-        return {"msg": "Success"}, 201, acao
+        user = User.query.filter_by(username=username).first()
+        if user is None:
+            return {"error": "Username doesn't exist"}, 404, acao
+        if not user.verify_password(password):
+            return {"error": "Wrong password"}, 403, acao
+        return {"token": user.generate_token()}, 201, acao
+

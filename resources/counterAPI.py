@@ -1,5 +1,6 @@
 from flask_restful import Resource
 from models.counter import Counter, db
+from resources.authAPI import auth, verify_token
 import datetime
 
 acao = {"Access-Control-Allow-Origin": "*"}
@@ -9,6 +10,8 @@ class CounterAPI(Resource):
     """
     Counter API
     """
+    decorators = [auth.login_required]
+
     @staticmethod
     def get():
         """
