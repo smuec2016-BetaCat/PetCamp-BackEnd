@@ -1,5 +1,5 @@
 from flask import Flask
-from flask_restful import Api,Resource
+from flask_restful import Api, Resource
 from models.base import db
 from resources.counterAPI import CounterAPI
 import pymysql
@@ -23,15 +23,20 @@ class Main_goodinfo(Resource):
         db = pymysql.connect(host='127.0.0.1', user='root', password='mm5201314', database='petcamp', port=3306,
                              charset='utf8', cursorclass=pymysql.cursors.DictCursor)
         cursor = db.cursor()
-        cursor.execute("select * from goodinfo")
-        data = cursor.fetchall()
-        datanew = {}
-        print(datanew)
-        datanew["msg"] = data
-        return datanew, 200, {"Access-Control-Allow-Origin": "*"}
+        dataall = []
+        cursor.execute("select * from goodsinfo ")
+        datainfo = cursor.fetchall()
+        cursor.execute("select * from goodsmsg ")
+        datamsg = cursor.fetchall()
+
+        for i in range(len(datainfo)):
+            data_new = {"info": datainfo[i], "msg": datamsg[i]}
+            dataall.append(data_new)
+            print(dataall)
+        return dataall, 200, {"Access-Control-Allow-Origin": "*"}
 
 
-api.add_resource(Main_goodinfo, "/api/maingoodinfo")
+api.add_resource(Main_goodinfo, '/api/maingoodinfo')
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=8080)
+    app.run(host="0.0.0.0", port=80)
