@@ -10,7 +10,7 @@ class CounterAPI(Resource):
     """
     Counter API
     """
-    decorators = [auth.login_required]
+    # decorators = [auth.login_required]
 
     @staticmethod
     def get():
