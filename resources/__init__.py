@@ -1,1 +1,1 @@
-__all__ = ["authAPI", "counterAPI", "registerAPI"]
+__all__ = ["authAPI", "counterAPI", "registerAPI", "imageAPI"]

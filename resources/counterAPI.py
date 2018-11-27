@@ -30,9 +30,7 @@ class CounterAPI(Resource):
         visit = Counter(date_time=current_datetime)
         db.session.add(visit)
         db.session.commit()
-        return {
-                   "insert_time": current_datetime.strftime("%Y-%m-%d %H:%M:%S")
-               }, 200, acao
+        return {"insert_time": current_datetime.strftime("%Y-%m-%d %H:%M:%S")}, 201, acao
 
     @staticmethod
     def delete():
@@ -42,4 +40,4 @@ class CounterAPI(Resource):
         """
         deleted_rows = Counter.query.delete()
         db.session.commit()
-        return {"deleted_rows": deleted_rows}, 200, acao
+        return {"deleted_rows": deleted_rows}, 205, acao
