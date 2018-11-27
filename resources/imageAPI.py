@@ -12,13 +12,15 @@ images = UploadSet("IMAGE")
 class ImageAPI(Resource):
     @staticmethod
     def post():
+        name = request.form["name"]
+        if Image.query.filter_by(name=name).first() is not None:
+            return {"error": "Image name has already been taken."}, 403, acao
         try:
             filename = images.save(request.files['image'])
         except KeyError:
             return {"error": "Image not found"}, 404, acao
         except UploadNotAllowed:
-            return {"error": "File type not supported"}, 403, acao
-        name = request.form["name"]
+            return {"error": "File type not supported"}, 406, acao
         image = Image(name=name, physical_name=filename, url=images.url(filename), upload_time=datetime.now())
         db.session.add(image)
         db.session.commit()
