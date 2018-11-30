@@ -1,3 +1,4 @@
+passlib
 aniso8601==4.0.1
 asn1crypto==0.24.0
 cffi==1.11.5
