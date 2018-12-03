@@ -1,9 +1,12 @@
 from flask import Flask
 from flask_restful import Api
 from flask_uploads import IMAGES, configure_uploads
+
+from config import (DB_HOST, DB_PASSWORD, DB_PORT, DB_SCHEMA, DB_USER,
+                    SECRET_KEY)
 from models.base import db
-from resources import counterAPI, agencyAPI, authAPI, imageAPI, registerAPI, trusteeshipOrderAPI
-from config import DB_USER, DB_PASSWORD, DB_HOST, DB_PORT, DB_SCHEMA, SECRET_KEY
+from resources import (agencyAPI, authAPI, counterAPI, imageAPI, registerAPI,
+                       trusteeshipOrderAPI)
 from resources.imageAPI import images
 
 app = Flask(__name__)

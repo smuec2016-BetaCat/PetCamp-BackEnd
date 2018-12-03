@@ -1,5 +1,5 @@
 from models.base import db
-from models.orderImage import trust_order_image
+from models.secondary import trust_order_image
 
 
 class TrusteeshipOrder(db.Model):
