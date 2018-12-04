@@ -22,3 +22,4 @@ class Agency(db.Model):
         lazy='subquery',
         backref=db.backref('agency', lazy=True)
     )
+    managers = db.relationship("User", backref="agency")
