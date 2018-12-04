@@ -1,8 +1,9 @@
 from flask import request
 from flask_restful import Resource
 from models.image import Image
-from models.orderImage import trust_order_image
+from models.secondary import trust_order_image
 from models.trusteeshipOrder import TrusteeshipOrder, db
+from models.agency import Agency
 from models.base import to_dict
 from datetime import datetime
 import random
@@ -39,6 +40,8 @@ class TrusteeshipOrderAPI(Resource):
             )
         except KeyError:
             return {"error": "Lack necessary argument"}, 406, acao
+        else:
+            return {"error": "Agency ID doesn't exist"}, 403, acao
         order.ord_num = str(order.create_time.strftime("%Y%m%d%H%M%S")) + "".join(
             [str(random.randint(0, 9)) for i in range(6)]
         )
