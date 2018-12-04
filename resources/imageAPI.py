@@ -24,7 +24,7 @@ class ImageAPI(Resource):
         image = Image(name=name, physical_name=filename, url=images.url(filename), upload_time=datetime.now())
         db.session.add(image)
         db.session.commit()
-        return {"filename": filename, "url": image.url}, 201, acao
+        return {"name": image.name, "url": image.url}, 201, acao
 
     @staticmethod
     def get():

@@ -1,6 +1,6 @@
 from flask_restful import Resource
 from models.counter import Counter, db
-from resources.authAPI import auth
+# from resources.authAPI import auth
 import datetime
 
 acao = {"Access-Control-Allow-Origin": "*"}
