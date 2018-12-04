@@ -17,7 +17,7 @@ class AgencyAPI(Resource):
         json = request.get_json()
         try:
             agency = Agency(
-                name=json["name"],
+                id=json["id"],
                 introduction=json["introduction"],
                 city=json["city"],
                 address=json["address"],
@@ -29,6 +29,23 @@ class AgencyAPI(Resource):
         db.session.add(agency)
         db.session.commit()
         return {"msg": "Success"}, 201, acao
+    
+    @staticmethod
+    def put():
+        """
+        Change agency certification status
+        :return: success or error message
+        """
+        json = request.get_json()
+        agency = Agency.query.filter_by(id=json["id"]).first()
+        if agency is None:
+            return{"error": "Agency not found"}, 404, acao
+        try:
+            agency.certification = json["certification"]
+        except KeyError:
+            return {"error": "Certification status is not provided"}, 406, acao
+        agency.last_update = datetime.now()
+        return {"msg": "Success"}, 200, acao
         
 
     @staticmethod

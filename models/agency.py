@@ -14,6 +14,7 @@ class Agency(db.Model):
     phone = db.Column(db.String(15), nullable=False)
     certification = db.Column(db.Boolean, nullable=False, default=False)
     create_time = db.Column(db.DateTime, nullable=False)
+    last_update = db.Column(db.DateTime, nullable=True)
     trust_orders = db.relationship("TrusteeshipOrder", backref='agency')
     images = db.relationship(
         "Image",
