@@ -17,7 +17,7 @@ class AgencyAPI(Resource):
         json = request.get_json()
         try:
             agency = Agency(
-                id=json["id"],
+                name=json["name"],
                 introduction=json["introduction"],
                 city=json["city"],
                 address=json["address"],
@@ -26,6 +26,7 @@ class AgencyAPI(Resource):
             )
         except KeyError:
             return {"error": "Lack necessary argument"}, 406, acao
+            agency.last_update = agency.create_time
         db.session.add(agency)
         db.session.commit()
         return {"msg": "Success"}, 201, acao
@@ -45,6 +46,7 @@ class AgencyAPI(Resource):
         except KeyError:
             return {"error": "Certification status is not provided"}, 406, acao
         agency.last_update = datetime.now()
+        db.session.commit()
         return {"msg": "Success"}, 200, acao
         
 
@@ -60,7 +62,7 @@ class AgencyAPI(Resource):
             for i in range(len(agency_list)):
                 agency_list[i] = to_dict(agency_list[i])
             return {"agency_list": agency_list}, 200, acao
-        agency = Agency.query.get(id=args["id"])
+        agency = Agency.query.get(int(args["id"]))
         if agency is None:
             return {"error": "Agency ID doesn't exist"}, 404, acao
         return {"agency": to_dict(agency)}, 200, acao
