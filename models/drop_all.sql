@@ -1,1 +1,1 @@
-DROP TABLE agency_image, trust_order_image, counter, image, trusteeship_order, user, agency;
+DROP TABLE agency_image, trust_order_image, counter, image, trusteeship_order, comment, user, agency;

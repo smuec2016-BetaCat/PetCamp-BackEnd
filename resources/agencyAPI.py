@@ -30,7 +30,7 @@ class AgencyAPI(Resource):
         db.session.add(agency)
         db.session.commit()
         return {"msg": "Success"}, 201, acao
-    
+
     @staticmethod
     def put():
         """
@@ -48,7 +48,6 @@ class AgencyAPI(Resource):
         agency.last_update = datetime.now()
         db.session.commit()
         return {"msg": "Success"}, 200, acao
-        
 
     @staticmethod
     def get():

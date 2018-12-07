@@ -36,4 +36,3 @@ class AuthAPI(Resource):
         if not user.verify_password(password):
             return {"error": "Wrong password"}, 403, acao
         return {"token": user.generate_token()}, 201, acao
-
