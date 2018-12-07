@@ -9,13 +9,6 @@ class User(db.Model):
     """
     The model of user and authorization information
     """
-<<<<<<< HEAD
-    id = db.Column(db.Integer, autoincrement=True, nullable=False, primary_key=True, unique=True)
-    username = db.Column(db.String(20), nullable=False)
-    password_hash = db.Column(db.String(120), nullable=False)
-    create_time = db.Column(db.DateTime, nullable=False)
-    own_agent_id = db.Column(db.Integer, db.ForeignKey("agency.id"), nullable=True)
-=======
     id = db.Column(
         db.Integer,
         autoincrement=True,
@@ -35,7 +28,6 @@ class User(db.Model):
         )
     comments = db.relationship("Comment", backref="author")
     comments = db.relationship("TrusteeshipOrder", backref="consumer")
->>>>>>> dev-yyh
 
     def hash_password(self, password):
         """
