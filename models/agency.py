@@ -6,7 +6,13 @@ class Agency(db.Model):
     """
     The model of agency
     """
-    id = db.Column(db.Integer, autoincrement=True, nullable=False, primary_key=True, unique=True)
+    id = db.Column(
+        db.Integer,
+        autoincrement=True,
+        nullable=False,
+        primary_key=True,
+        unique=True
+        )
     name = db.Column(db.String(50), nullable=False)
     introduction = db.Column(db.Text, nullable=True)
     city = db.Column(db.String(20), nullable=False)
@@ -20,6 +26,7 @@ class Agency(db.Model):
         "Image",
         secondary=agency_image,
         lazy='subquery',
-        backref=db.backref('agency', lazy=True)
+        backref=db.backref('image_of', lazy=True)
     )
-    managers = db.relationship("User", backref="agency")
+    managers = db.relationship("User", backref="own_agency")
+    comments = db.relationship("Comment", backref="comment_for")

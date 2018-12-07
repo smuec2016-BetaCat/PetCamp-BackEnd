@@ -1,5 +1,6 @@
 from flask import request
 from flask_restful import Resource
+<<<<<<< HEAD
 from models.image import Image
 from models.secondary import trust_order_image
 from models.trusteeshipOrder import TrusteeshipOrder, db
@@ -7,6 +8,11 @@ from models.agency import Agency
 from models.base import to_dict
 from datetime import datetime
 import random
+=======
+from models.trusteeshipOrder import TrusteeshipOrder, db
+from models.base import to_dict
+from datetime import datetime
+>>>>>>> dev-yyh
 
 acao = {"Access-Control-Allow-Origin": "*"}
 
@@ -16,6 +22,7 @@ class TrusteeshipOrderAPI(Resource):
     Trusteeship order API
     """
     @staticmethod
+<<<<<<< HEAD
     def post():
         """
         Create a new order
@@ -63,14 +70,36 @@ class TrusteeshipOrderAPI(Resource):
         """
         json = request.get_json()
         order = TrusteeshipOrder.query.filter_by(ord_num=json["ord_num"]).first()
+=======
+    def put():
+        """
+        Close an order
+        :return: success or error message and the close time
+        """
+        json = request.get_json()
+        order = TrusteeshipOrder.query.filter_by(
+            ord_num=json["ord_num"],
+            status=1
+            ).first()
+>>>>>>> dev-yyh
         if order is None:
             return {"error": "Order not found"}, 404, acao
         try:
             order.agency_fee = json["agency_fee"]
         except KeyError:
             return {"error": "Agency fee is not provided"}, 406, acao
+<<<<<<< HEAD
         order.close_time = datetime.now()
         return {"msg": "Success", "close_time": order.close_time.strftime("%Y-%m-%d %H:%M:%S")}, 200, acao
+=======
+        order.status = 2
+        order.close_time = datetime.now()
+        db.session.commit()
+        return {
+            "msg": "Success",
+            "close_time": order.close_time.strftime("%Y-%m-%d %H:%M:%S")
+            }, 200, acao
+>>>>>>> dev-yyh
 
     @staticmethod
     def get():
@@ -79,6 +108,7 @@ class TrusteeshipOrderAPI(Resource):
         :return: order information
         """
         args = request.args
+<<<<<<< HEAD
         if "agency_id" not in args and "ord_num" not in args:
             return {"error": "Either agency ID or order number must be provided"}, 406, acao
         if "ord_num" not in args:
@@ -91,3 +121,51 @@ class TrusteeshipOrderAPI(Resource):
             return {"error": "Order number doesn't exist"}, 404, acao
         return {"order": to_dict(order)}, 200, acao
 
+=======
+        if "ord_num" in args:
+            order = TrusteeshipOrder.query.filter_by(
+                ord_num=args["ord_num"],
+                status=1
+            ).first()
+            if order is None:
+                order = TrusteeshipOrder.query.filter_by(
+                    ord_num=args["ord_num"],
+                    status=2
+                ).first()
+                if order is None:
+                    return {"error": "Order not found"}, 404, acao
+            return {"order": to_dict(order)}, 200, acao
+
+        elif "user_id" in args:
+            orders = TrusteeshipOrder.query.filter_by(
+                user_id=args["user_id"],
+                status=1
+            ).all()
+            orders += TrusteeshipOrder.query.filter_by(
+                user_id=args["user_id"],
+                status=2
+            ).all()
+            if len(orders) == 0:
+                return {"error": "Order not found"}, 404, acao
+
+        elif "agency_id" in args:
+            orders = TrusteeshipOrder.query.filter_by(
+                agency_id=args["agency_id"],
+                status=1
+            ).all()
+            orders += TrusteeshipOrder.query.filter_by(
+                agency_id=args["agency_id"],
+                status=2
+            ).all()
+            if len(orders) == 0:
+                return {"error": "Order not found"}, 404, acao
+
+        else:
+            return {
+                "error": "Agency ID, user ID or order number must be provided"
+                }, 406, acao
+
+        for i in range(len(orders)):
+            orders[i] = to_dict(orders[i])
+        return {"orders": orders}, 200, acao
+>>>>>>> dev-yyh
