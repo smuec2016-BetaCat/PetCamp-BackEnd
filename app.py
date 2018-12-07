@@ -6,7 +6,7 @@ from config import (DB_HOST, DB_PASSWORD, DB_PORT, DB_SCHEMA, DB_USER,
                     SECRET_KEY)
 from models.base import db
 from resources import (agencyAPI, authAPI, counterAPI, imageAPI, registerAPI,
-                       trusteeshipOrderAPI, commentAPI)
+                       trusteeshipOrderAPI, commentAPI, cartAPI)
 from resources.imageAPI import images
 
 app = Flask(__name__)
@@ -32,6 +32,7 @@ api.add_resource(
     )
 api.add_resource(agencyAPI.AgencyAPI, "/api/v0/agency")
 api.add_resource(commentAPI.CommentAPI, "/api/v0/agency/comments")
+api.add_resource(cartAPI.CartAPI, "/api/v0/cart")
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", debug=True)

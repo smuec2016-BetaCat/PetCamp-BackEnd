@@ -27,6 +27,7 @@ class User(db.Model):
         nullable=True
         )
     comments = db.relationship("Comment", backref="author")
+    comments = db.relationship("TrusteeshipOrder", backref="consumer")
 
     def hash_password(self, password):
         """

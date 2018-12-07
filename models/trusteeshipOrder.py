@@ -25,12 +25,19 @@ class TrusteeshipOrder(db.Model):
     friendly = db.Column(db.Boolean)
     comment = db.Column(db.Text)
     price = db.Column(db.Float, nullable=False)
+    status = db.Column(db.Integer, nullable=False, default=0)
     create_time = db.Column(db.DateTime, nullable=False)
+    open_time = db.Column(db.DateTime)
     close_time = db.Column(db.DateTime)
     agency_fee = db.Column(db.Float)
     agency_id = db.Column(
         db.Integer,
         db.ForeignKey('agency.id'),
+        nullable=False
+        )
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey('user.id'),
         nullable=False
         )
     images = db.relationship(
