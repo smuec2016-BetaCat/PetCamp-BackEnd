@@ -3,7 +3,6 @@ from flask_restful import Resource
 from models.user import User, db
 from datetime import datetime
 
-acao = {"Access-Control-Allow-Origin": "*"}
 
 
 class RegisterAPI(Resource):

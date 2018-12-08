@@ -4,8 +4,6 @@ from models.agency import Agency, db
 from models.base import to_dict
 from datetime import datetime
 
-acao = {"Access-Control-Allow-Origin": "*"}
-
 
 class AgencyAPI(Resource):
     @staticmethod
@@ -25,11 +23,11 @@ class AgencyAPI(Resource):
                 create_time=datetime.now()
             )
         except KeyError:
-            return {"error": "Lack necessary argument"}, 406, acao
+            return {"error": "Lack necessary argument"}, 406
             agency.last_update = agency.create_time
         db.session.add(agency)
         db.session.commit()
-        return {"msg": "Success"}, 201, acao
+        return {"msg": "Success"}, 201
     @staticmethod
     def put():
         """
@@ -39,14 +37,14 @@ class AgencyAPI(Resource):
         json = request.get_json()
         agency = Agency.query.filter_by(id=json["id"]).first()
         if agency is None:
-            return{"error": "Agency not found"}, 404, acao
+            return{"error": "Agency not found"}, 404
         try:
             agency.certification = json["certification"]
         except KeyError:
-            return {"error": "Certification status is not provided"}, 406, acao
+            return {"error": "Certification status is not provided"}, 406
         agency.last_update = datetime.now()
         db.session.commit()
-        return {"msg": "Success"}, 200, acao
+        return {"msg": "Success"}, 200
 
     @staticmethod
     def get():
@@ -59,8 +57,8 @@ class AgencyAPI(Resource):
             agency_list = Agency.query.all()
             for i in range(len(agency_list)):
                 agency_list[i] = to_dict(agency_list[i])
-            return {"agency_list": agency_list}, 200, acao
+            return {"agency_list": agency_list}, 200
         agency = Agency.query.get(int(args["id"]))
         if agency is None:
-            return {"error": "Agency ID doesn't exist"}, 404, acao
-        return {"agency": to_dict(agency)}, 200, acao
+            return {"error": "Agency ID doesn't exist"}, 404
+        return {"agency": to_dict(agency)}, 200

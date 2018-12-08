@@ -3,7 +3,6 @@ from flask_httpauth import HTTPTokenAuth
 from flask_restful import Resource
 from models.user import User
 
-acao = {"Access-Control-Allow-Origin": "*"}
 auth = HTTPTokenAuth()
 
 
@@ -32,7 +31,7 @@ class AuthAPI(Resource):
         password = request.json.get("password")
         user = User.query.filter_by(username=username).first()
         if user is None:
-            return {"error": "Username doesn't exist"}, 404, acao
+            return {"error": "Username doesn't exist"}, 404
         if not user.verify_password(password):
-            return {"error": "Wrong password"}, 403, acao
-        return {"token": user.generate_token()}, 201, acao
+            return {"error": "Wrong password"}, 403
+        return {"token": user.generate_token()}, 201

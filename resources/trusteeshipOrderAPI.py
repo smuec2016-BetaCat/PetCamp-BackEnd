@@ -4,8 +4,6 @@ from models.trusteeshipOrder import TrusteeshipOrder, db
 from models.base import to_dict
 from datetime import datetime
 
-acao = {"Access-Control-Allow-Origin": "*"}
-
 
 class TrusteeshipOrderAPI(Resource):
     """
@@ -23,18 +21,18 @@ class TrusteeshipOrderAPI(Resource):
             status=1
             ).first()
         if order is None:
-            return {"error": "Order not found"}, 404, acao
+            return {"error": "Order not found"}, 404
         try:
             order.agency_fee = json["agency_fee"]
         except KeyError:
-            return {"error": "Agency fee is not provided"}, 406, acao
+            return {"error": "Agency fee is not provided"}, 406
         order.status = 2
         order.close_time = datetime.now()
         db.session.commit()
         return {
             "msg": "Success",
             "close_time": order.close_time.strftime("%Y-%m-%d %H:%M:%S")
-            }, 200, acao
+            }, 200
 
     @staticmethod
     def get():
@@ -54,8 +52,8 @@ class TrusteeshipOrderAPI(Resource):
                     status=2
                 ).first()
                 if order is None:
-                    return {"error": "Order not found"}, 404, acao
-            return {"order": to_dict(order)}, 200, acao
+                    return {"error": "Order not found"}, 404
+            return {"order": to_dict(order)}, 200
 
         elif "user_id" in args:
             orders = TrusteeshipOrder.query.filter_by(
@@ -67,7 +65,7 @@ class TrusteeshipOrderAPI(Resource):
                 status=2
             ).all()
             if len(orders) == 0:
-                return {"error": "Order not found"}, 404, acao
+                return {"error": "Order not found"}, 404
 
         elif "agency_id" in args:
             orders = TrusteeshipOrder.query.filter_by(
@@ -79,13 +77,13 @@ class TrusteeshipOrderAPI(Resource):
                 status=2
             ).all()
             if len(orders) == 0:
-                return {"error": "Order not found"}, 404, acao
+                return {"error": "Order not found"}, 404
 
         else:
             return {
                 "error": "Agency ID, user ID or order number must be provided"
-                }, 406, acao
+                }, 406
 
         for i in range(len(orders)):
             orders[i] = to_dict(orders[i])
-        return {"orders": orders}, 200, acao
+        return {"orders": orders}, 200

@@ -3,8 +3,6 @@ from models.counter import Counter, db
 # from resources.authAPI import auth
 import datetime
 
-acao = {"Access-Control-Allow-Origin": "*"}
-
 
 class CounterAPI(Resource):
     """
@@ -18,7 +16,7 @@ class CounterAPI(Resource):
         Get the number of records
         :return: the number of records
         """
-        return {"count": len(Counter.query.all())}, 200, acao
+        return {"count": len(Counter.query.all())}, 200
 
     @staticmethod
     def post():
@@ -30,7 +28,7 @@ class CounterAPI(Resource):
         visit = Counter(date_time=current_datetime)
         db.session.add(visit)
         db.session.commit()
-        return {"insert_time": current_datetime.strftime("%Y-%m-%d %H:%M:%S")}, 201, acao
+        return {"insert_time": current_datetime.strftime("%Y-%m-%d %H:%M:%S")}, 201
 
     @staticmethod
     def delete():
@@ -40,4 +38,4 @@ class CounterAPI(Resource):
         """
         deleted_rows = Counter.query.delete()
         db.session.commit()
-        return {"deleted_rows": deleted_rows}, 205, acao
+        return {"deleted_rows": deleted_rows}, 205

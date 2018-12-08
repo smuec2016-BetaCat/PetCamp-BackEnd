@@ -6,8 +6,6 @@ from models.image import Image
 from models.base import to_dict
 from datetime import datetime
 
-acao = {"Access-Control-Allow-Origin": "*"}
-
 
 class CartAPI(Resource):
     """
@@ -38,7 +36,7 @@ class CartAPI(Resource):
                 user_id=json["user_id"]
             )
         except KeyError:
-            return {"error": "Lack necessary argument"}, 406, acao
+            return {"error": "Lack necessary argument"}, 406
         ord_num = str(
             order.create_time.strftime("%Y%m%d%H%M%S")
             ) + "".join(
@@ -51,11 +49,11 @@ class CartAPI(Resource):
                 if image is None:
                     return {
                         "error": image_name + " not found in image table"
-                        }, 404, acao
+                        }, 404
                 order.images.append(image)
         db.session.add(order)
         db.session.commit()
-        return {"msg": "Success", "ord_num": ord_num}, 201, acao
+        return {"msg": "Success", "ord_num": ord_num}, 201
 
     @staticmethod
     def get():
@@ -70,10 +68,10 @@ class CartAPI(Resource):
                 status=0
                 ).all()
         except KeyError:
-            return {"error": "Lack necessary argument"}, 406, acao
+            return {"error": "Lack necessary argument"}, 406
         for i in range(len(orders)):
             orders[i] = to_dict(orders[i])
-        return {"orders": orders}, 200, acao
+        return {"orders": orders}, 200
 
     @staticmethod
     def put():
@@ -88,16 +86,16 @@ class CartAPI(Resource):
                 status=0
             ).first()
             if order is None:
-                return {"error": "Order not found"}, 404, acao
+                return {"error": "Order not found"}, 404
         except KeyError:
-            return {"error": "Agency fee is not provided"}, 406, acao
+            return {"error": "Agency fee is not provided"}, 406
         order.status = 1
         order.open_time = datetime.now()
         db.session.commit()
         return {
             "msg": "Success",
             "open_time": order.open_time.strftime("%Y-%m-%d %H:%M:%S")
-            }, 200, acao
+            }, 200
 
     @staticmethod
     def delete():
@@ -112,9 +110,9 @@ class CartAPI(Resource):
                 status=0
             ).first()
             if order is None:
-                return {"error": "Order not found"}, 404, acao
+                return {"error": "Order not found"}, 404
         except KeyError:
-            return {"error": "Agency fee is not provided"}, 406, acao
+            return {"error": "Agency fee is not provided"}, 406
         db.session.delete(order)
         db.session.commit()
-        return {"msg": "Success"}, 200, acao
+        return {"msg": "Success"}, 200
