@@ -1,4 +1,5 @@
 from flask import Flask
+from flask_cors import CORS
 from flask_restful import Api
 from flask_uploads import IMAGES, configure_uploads
 
@@ -10,6 +11,7 @@ from resources import (agencyAPI, authAPI, counterAPI, imageAPI, registerAPI,
 from resources.imageAPI import images
 
 app = Flask(__name__)
+CORS(app)
 app.secret_key = SECRET_KEY
 api = Api(app)
 app.config["SQLALCHEMY_DATABASE_URI"] = \
