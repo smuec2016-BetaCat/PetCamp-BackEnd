@@ -28,7 +28,9 @@ class CounterAPI(Resource):
         visit = Counter(date_time=current_datetime)
         db.session.add(visit)
         db.session.commit()
-        return {"insert_time": current_datetime.strftime("%Y-%m-%d %H:%M:%S")}, 201
+        return {
+            "insert_time": current_datetime.strftime("%Y-%m-%d %H:%M:%S")
+            }, 201
 
     @staticmethod
     def delete():

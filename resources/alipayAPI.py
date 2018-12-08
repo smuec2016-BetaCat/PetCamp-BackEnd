@@ -1,10 +1,5 @@
-SECRET_KEY = "25dcaa77-c2f3-418e-84c7-078d33f116cd"
+from alipay import AliPay
 
-DB_USER = "yyh"
-DB_PASSWORD = "yyh970905"
-DB_HOST = "itsyuekao.com"
-DB_PORT = "3306"
-DB_SCHEMA = "pet_camp"
 
 app_private_key_string = """-----BEGIN RSA PRIVATE KEY-----
 MIIEowIBAAKCAQEAzlz5evuv7a0DDrTwQ4tCKdIyBUSk9krtte7iFgSUKzMV632s
@@ -43,3 +38,20 @@ EnjIdoXhgV1mZitXxnlPbqEM8fiJj7ONOvG+QffjTT76vhHzV95lMNUTUs0duzHIZc1zAZDsigb30hxG
 xWf7Z6hAa6hR8JsJKflL3kB1X6MKL7e3+DD/o8sSOmCIM0Eynm1QWtH8EQSwIDAQAB
 -----END PUBLIC KEY-----
 """
+
+alipay = AliPay(
+    appid="2016092000552187",
+    app_notify_url=None,  # 默认回调url
+    app_private_key_string=app_private_key_string,
+    # 支付宝的公钥，验证支付宝回传消息使用，不是你自己的公钥,
+    alipay_public_key_string=alipay_public_key_string
+)
+
+order_string = alipay.api_alipay_trade_page_pay(
+    out_trade_no="200",
+    subject="iPhone XR MIN",
+    total_amount=1211.12,
+    return_url="http://www.itsyuekao.com"
+)
+
+print("https://openapi.alipaydev.com/gateway.do?" + order_string)

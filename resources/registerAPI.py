@@ -4,7 +4,6 @@ from models.user import User, db
 from datetime import datetime
 
 
-
 class RegisterAPI(Resource):
     """
     Register API
