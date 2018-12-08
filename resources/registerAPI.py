@@ -25,10 +25,10 @@ class RegisterAPI(Resource):
                 create_time=datetime.now()
             )
         except KeyError:
-            return {"error": "Lack necessary argument"}, 406, acao
+            return {"error": "Lack necessary argument"}, 406
         if User.query.filter_by(username=user.username).first() is not None:
-            return {"error": "User name has already been taken."}, 403, acao
+            return {"error": "User name has already been taken."}, 403
         user.hash_password(json["password"])
         db.session.add(user)
         db.session.commit()
-        return {"msg": "Success"}, 201, acao
+        return {"msg": "Success"}, 201
