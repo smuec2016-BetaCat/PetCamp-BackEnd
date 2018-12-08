@@ -10,7 +10,7 @@ class AliPayAPI(Resource):
     def __init__(self):
         self.alipay = AliPay(
             appid="2016092000552187",
-            app_notify_url="http://localhost:5000/api/v0/order/alipay",
+            app_notify_url="http://www.itsyuekao.com:5000/api/v0/order/alipay",
             app_private_key_string=app_private_key_string,
             alipay_public_key_string=alipay_public_key_string
         )
