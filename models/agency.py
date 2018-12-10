@@ -31,3 +31,4 @@ class Agency(db.Model):
     )
     managers = db.relationship("User", backref="own_agency")
     comments = db.relationship("Comment", backref="comment_for")
+    counter = db.relationship("Counter", backref="counter_for")

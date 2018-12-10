@@ -1,6 +1,7 @@
 from flask import request
 from flask_restful import Resource
 from models.comment import Comment, db
+from models.user import User
 from models.base import to_dict
 from datetime import datetime
 
@@ -44,5 +45,7 @@ class CommentAPI(Resource):
         except KeyError:
             return {"error": "Lack necessary argument"}, 406
         for i in range(len(comments)):
+            user = User.query.filter_by(id=comments[i].user_id).first()
             comments[i] = to_dict(comments[i])
+            comments[i]["user_name"] = user.username
         return {"comments": comments}, 200

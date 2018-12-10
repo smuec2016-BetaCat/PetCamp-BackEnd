@@ -1,6 +1,7 @@
 from flask import request
 from flask_restful import Resource
 from models.user import User, db
+from models.base import to_dict
 from datetime import datetime
 
 
@@ -29,4 +30,13 @@ class RegisterAPI(Resource):
         user.hash_password(json["password"])
         db.session.add(user)
         db.session.commit()
-        return {"msg": "Success"}, 201
+        user = User.query.filter_by(username=user.username).first()
+        token = user.generate_token()
+        user = to_dict(user)
+        return {
+            "token": token,
+            "user": {
+                "id": user["id"],
+                "username": user["username"],
+                "own_agent_id": user["own_agent_id"]
+            }}, 201

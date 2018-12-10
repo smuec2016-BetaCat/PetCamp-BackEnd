@@ -1,3 +1,4 @@
+from flask import request
 from flask_restful import Resource
 from models.counter import Counter, db
 # from resources.authAPI import auth
@@ -16,7 +17,16 @@ class CounterAPI(Resource):
         Get the number of records
         :return: the number of records
         """
-        return {"count": len(Counter.query.all())}, 200
+        args = request.args
+        try:
+            count = len(
+                Counter.query.filter_by(agency_id=args["agency_id"]).all()
+                )
+        except KeyError:
+            count = len(
+                Counter.query.all()
+                )
+        return {"count": count}, 200
 
     @staticmethod
     def post():
@@ -24,13 +34,21 @@ class CounterAPI(Resource):
         Insert a new record
         :return: insert time
         """
+        json = request.get_json()
         current_datetime = datetime.datetime.now()
-        visit = Counter(date_time=current_datetime)
+        try:
+            visit = Counter(
+                date_time=current_datetime,
+                agency_id=json["agency_id"]
+                )
+        except KeyError:
+            return {"error": "Lack necessary argument"}, 406
         db.session.add(visit)
         db.session.commit()
-        return {
-            "insert_time": current_datetime.strftime("%Y-%m-%d %H:%M:%S")
-            }, 201
+        count = len(
+                Counter.query.filter_by(agency_id=json["agency_id"]).all()
+                )
+        return {"count": count}, 201
 
     @staticmethod
     def delete():

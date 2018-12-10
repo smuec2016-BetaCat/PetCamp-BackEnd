@@ -2,6 +2,7 @@ from flask import request, g
 from flask_httpauth import HTTPTokenAuth
 from flask_restful import Resource
 from models.user import User
+from models.base import to_dict
 
 auth = HTTPTokenAuth()
 
@@ -15,6 +16,7 @@ def verify_token(token):
     """
     g.current_user = User.verify_token(token)
     return g.current_user is not None
+
 
 def verify_admin(user_id):
     return g.current_user.username in ["betacat", "dr_liyan"]
@@ -37,4 +39,13 @@ class AuthAPI(Resource):
             return {"error": "Username doesn't exist"}, 404
         if not user.verify_password(password):
             return {"error": "Wrong password"}, 403
-        return {"token": user.generate_token()}, 201
+        token = user.generate_token()
+        user = to_dict(user)
+        return {
+            "token": token,
+            "user": {
+                "id": user["id"],
+                "username": user["username"],
+                "own_agent_id": user["own_agent_id"]
+            }
+            }, 201

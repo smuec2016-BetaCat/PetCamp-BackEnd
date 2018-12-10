@@ -1,6 +1,6 @@
 from flask import request, g
 from flask_restful import Resource
-from authAPI import verify_admin
+from resources.authAPI import verify_admin
 from models.agency import Agency, db
 from models.user import User
 from models.base import to_dict
@@ -23,12 +23,12 @@ class AgencyAPI(Resource):
                 address=json["address"],
                 phone=json["phone"],
                 create_time=datetime.now(),
-                avator = json["avator"]
+                avator=json["avator"]
             )
             manager_id = json["manager_id"]
         except KeyError:
             return {"error": "Lack necessary argument"}, 406
-        if g.current_user.id != manager_id and verify_admin() == False:
+        if g.current_user.id != manager_id and not verify_admin():
             return {"error": "Authorization problem"}, 401
         if Agency.query.filter_by(name=json["name"]).first() is not None:
             return {"error": "Agency name has been taken"}, 403
@@ -45,28 +45,28 @@ class AgencyAPI(Resource):
         db.session.commit()
         return {"msg": "Success"}, 201
 
-    @staticmethod
-    def put():
-        """
-        Change agency certification status
-        :return: success or error message
-        """
-        json = request.get_json()
-        try:
-            agency.certification = json["certification"]
-            id = json["id"]
-        except KeyError:
-            return {"error": "Lack necessary argument"}, 406
+    # @staticmethod
+    # def put():
+    #     """
+    #     image for agency
+    #     """
+    #     json = request.get_json()
+    #     try:
+    #         certification = json["certification"]
+    #         id = json["id"]
+    #     except KeyError:
+    #         return {"error": "Lack necessary argument"}, 406
 
-        if g.current_user.own_agent_id != id and verify_admin() == False:
-            return {"error": "Authorization problem"}, 401
-        
-        agency = Agency.query.filter_by(id=id).first()
-        if agency is None:
-            return {"error": "Agency not found"}, 404
-        agency.last_update = datetime.now()
-        db.session.commit()
-        return {"msg": "Success"}, 200
+    #     if g.current_user.own_agent_id != id and not verify_admin():
+    #         return {"error": "Authorization problem"}, 401
+
+    #     agency = Agency.query.filter_by(id=id).first()
+    #     if agency is None:
+    #         return {"error": "Agency not found"}, 404
+    #     agency.certification = certification
+    #     agency.last_update = datetime.now()
+    #     db.session.commit()
+    #     return {"msg": "Success"}, 200
 
     @staticmethod
     def get():
@@ -78,7 +78,14 @@ class AgencyAPI(Resource):
         if "id" not in args:
             agency_list = Agency.query.all()
             for i in range(len(agency_list)):
+                user = User.query.filter_by(
+                    own_agent_id=agency_list[i].id
+                    ).first()
                 agency_list[i] = to_dict(agency_list[i])
+                agency_list[i]["owner"] = user.username
+                agency_list[i]["img_list"] = [
+                    {"src": "", "id": i, "show": False} for i in range(3)
+                    ]   
             return {"agency_list": agency_list}, 200
         agency = Agency.query.get(int(args["id"]))
         if agency is None:
@@ -98,7 +105,7 @@ class AgencyAPI(Resource):
         except KeyError:
             return {"error": "Lack necessary argument"}, 406
 
-        if g.current_user.own_agent_id != agency_id and verify_admin() == False:
+        if g.current_user.own_agent_id != agency_id and not verify_admin():
             return {"error": "Authorization problem"}, 401
 
         if manager is None:
@@ -123,7 +130,7 @@ class AgencyAPI(Resource):
         except KeyError:
             return {"error": "Lack necessary argument"}, 406
 
-        if g.current_user.own_agent_id != agency_id and verify_admin() == False:
+        if g.current_user.own_agent_id != agency_id and not verify_admin():
             return {"error": "Authorization problem"}, 401
 
         if manager is None:

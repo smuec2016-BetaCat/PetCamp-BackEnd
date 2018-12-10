@@ -1,7 +1,7 @@
 import random
 from flask import request, g
 from flask_restful import Resource
-from authAPI import verify_admin
+from resources.authAPI import verify_admin
 from models.trusteeshipOrder import TrusteeshipOrder, db
 from models.image import Image
 from models.base import to_dict
