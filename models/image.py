@@ -10,3 +10,4 @@ class Image(db.Model):
     physical_name = db.Column(db.String(50), nullable=False)
     url = db.Column(db.String(250), nullable=False)
     upload_time = db.Column(db.DateTime, nullable=False)
+    agency_avator = db.relationship("Agency", backref='avator_of')

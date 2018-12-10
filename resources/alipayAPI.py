@@ -30,8 +30,10 @@ class AliPayAPI(Resource):
             wap = json["wap"]
         except KeyError:
             return {"error": "Lack necessary argument"}, 406
+
         if order is None:
             return {"error": "Order not found"}, 404
+        
         if wap:
             sig = self.alipay.api_alipay_trade_wap_pay(
                 out_trade_no=order.ord_num,

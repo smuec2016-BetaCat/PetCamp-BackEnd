@@ -1,5 +1,6 @@
-from flask import request
+from flask import request, g
 from flask_restful import Resource
+from authAPI import verify_admin
 from models.agency import Agency, db
 from models.user import User
 from models.base import to_dict
@@ -21,11 +22,14 @@ class AgencyAPI(Resource):
                 city=json["city"],
                 address=json["address"],
                 phone=json["phone"],
-                create_time=datetime.now()
+                create_time=datetime.now(),
+                avator = json["avator"]
             )
             manager_id = json["manager_id"]
         except KeyError:
             return {"error": "Lack necessary argument"}, 406
+        if g.current_user.id != manager_id and verify_admin() == False:
+            return {"error": "Authorization problem"}, 401
         if Agency.query.filter_by(name=json["name"]).first() is not None:
             return {"error": "Agency name has been taken"}, 403
         agency.last_update = agency.create_time
@@ -48,13 +52,18 @@ class AgencyAPI(Resource):
         :return: success or error message
         """
         json = request.get_json()
-        agency = Agency.query.filter_by(id=json["id"]).first()
-        if agency is None:
-            return {"error": "Agency not found"}, 404
         try:
             agency.certification = json["certification"]
+            id = json["id"]
         except KeyError:
-            return {"error": "Certification status is not provided"}, 406
+            return {"error": "Lack necessary argument"}, 406
+
+        if g.current_user.own_agent_id != id and verify_admin() == False:
+            return {"error": "Authorization problem"}, 401
+        
+        agency = Agency.query.filter_by(id=id).first()
+        if agency is None:
+            return {"error": "Agency not found"}, 404
         agency.last_update = datetime.now()
         db.session.commit()
         return {"msg": "Success"}, 200
@@ -88,6 +97,10 @@ class AgencyAPI(Resource):
             agency_id = json["agency_id"]
         except KeyError:
             return {"error": "Lack necessary argument"}, 406
+
+        if g.current_user.own_agent_id != agency_id and verify_admin() == False:
+            return {"error": "Authorization problem"}, 401
+
         if manager is None:
             return {"error": "User not found"}, 404
         if manager.own_agent_id is not None:
@@ -109,6 +122,10 @@ class AgencyAPI(Resource):
             agency_id = json["agency_id"]
         except KeyError:
             return {"error": "Lack necessary argument"}, 406
+
+        if g.current_user.own_agent_id != agency_id and verify_admin() == False:
+            return {"error": "Authorization problem"}, 401
+
         if manager is None:
             return {"error": "User not found"}, 404
         if manager.own_agent_id is None:

@@ -2,6 +2,7 @@ from flask import request
 from flask_restful import Resource
 from flask_uploads import UploadSet, UploadNotAllowed
 from models.image import Image, db
+from models.base import to_dict
 from datetime import datetime
 
 images = UploadSet("IMAGE")
@@ -27,7 +28,7 @@ class ImageAPI(Resource):
             )
         db.session.add(image)
         db.session.commit()
-        return {"name": image.name, "url": image.url}, 201
+        return to_dict(image), 201
 
     @staticmethod
     def get():

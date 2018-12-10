@@ -28,7 +28,7 @@ class CommentAPI(Resource):
             return {"error": "Lack necessary argument"}, 406
         db.session.add(comment)
         db.session.commit()
-        return {"msg": "Success"}, 201
+        return {"msg": "Success", "comment": to_dict(comment)}, 201
 
     @staticmethod
     def get():

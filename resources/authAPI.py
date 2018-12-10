@@ -16,6 +16,9 @@ def verify_token(token):
     g.current_user = User.verify_token(token)
     return g.current_user is not None
 
+def verify_admin(user_id):
+    return g.current_user.username in ["betacat", "dr_liyan"]
+
 
 class AuthAPI(Resource):
     """

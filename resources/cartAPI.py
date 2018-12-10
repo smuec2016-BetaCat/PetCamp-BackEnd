@@ -1,6 +1,7 @@
 import random
-from flask import request
+from flask import request, g
 from flask_restful import Resource
+from authAPI import verify_admin
 from models.trusteeshipOrder import TrusteeshipOrder, db
 from models.image import Image
 from models.base import to_dict
@@ -37,6 +38,10 @@ class CartAPI(Resource):
             )
         except KeyError:
             return {"error": "Lack necessary argument"}, 406
+
+        if g.current_user.id != manager_id and verify_admin() == False:
+            return {"error": "Authorization problem"}, 401
+
         ord_num = str(
             order.create_time.strftime("%Y%m%d%H%M%S")
             ) + "".join(
@@ -63,12 +68,20 @@ class CartAPI(Resource):
         """
         args = request.args
         try:
+            assert args["user_id"] == g.current_user["id"]
+        except KeyError:
+            return {"error": "Token is not provided"}, 401
+        except AssertionError:
+            return {"error": "Authorization problem"}, 401
+
+        try:
             orders = TrusteeshipOrder.query.filter_by(
                 user_id=args["user_id"],
                 status=0
                 ).all()
         except KeyError:
             return {"error": "Lack necessary argument"}, 406
+        
         for i in range(len(orders)):
             orders[i] = to_dict(orders[i])
         return {"orders": orders}, 200

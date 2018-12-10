@@ -21,6 +21,7 @@ class Agency(db.Model):
     certification = db.Column(db.Boolean, nullable=False, default=False)
     create_time = db.Column(db.DateTime, nullable=False)
     last_update = db.Column(db.DateTime, nullable=True)
+    avator = db.Column(db.Integer, db.ForeignKey("image.id"), nullable=False)
     trust_orders = db.relationship("TrusteeshipOrder", backref='agency')
     images = db.relationship(
         "Image",
