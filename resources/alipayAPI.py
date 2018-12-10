@@ -27,16 +27,25 @@ class AliPayAPI(Resource):
             ).first()
             subject = json["subject"]
             return_url = json["return_url"]
+            wap = json["wap"]
         except KeyError:
             return {"error": "Lack necessary argument"}, 406
         if order is None:
             return {"error": "Order not found"}, 404
-        sig = self.alipay.api_alipay_trade_page_pay(
-            out_trade_no=order.ord_num,
-            subject=subject,
-            total_amount=order.price,
-            return_url=return_url
-        )
+        if wap:
+            sig = self.alipay.api_alipay_trade_wap_pay(
+                out_trade_no=order.ord_num,
+                subject=subject,
+                total_amount=order.price,
+                return_url=return_url
+            )
+        else:
+            sig = self.alipay.api_alipay_trade_page_pay(
+                out_trade_no=order.ord_num,
+                subject=subject,
+                total_amount=order.price,
+                return_url=return_url
+            )
         return {
             "alipay_url": "https://openapi.alipaydev.com/gateway.do?" + sig
         }, 200
