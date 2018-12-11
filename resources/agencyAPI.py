@@ -83,8 +83,13 @@ class AgencyAPI(Resource):
                     ).first()
                 agency_list[i] = to_dict(agency_list[i])
                 agency_list[i]["owner"] = user.username
+                srcs = [
+                    "http://itsyuekao.com:5000/_uploads/IMAGE/mmexport1544506377152.jpg",
+                    "http://itsyuekao.com:5000/_uploads/IMAGE/mmexport1544506379151.jpg",
+                    "http://itsyuekao.com:5000/_uploads/IMAGE/mmexport1544506380445.jpg"
+                    ]
                 agency_list[i]["img_list"] = [
-                    {"src": "", "id": i, "show": False} for i in range(3)
+                    {"src": srcs[i], "id": i, "show": False} for i in range(3)
                     ]   
             return {"agency_list": agency_list}, 200
         agency = Agency.query.get(int(args["id"]))
