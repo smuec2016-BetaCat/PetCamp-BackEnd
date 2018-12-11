@@ -22,30 +22,34 @@ class AliPayAPI(Resource):
         """
         json = request.get_json()
         try:
-            order = TrusteeshipOrder.query.filter_by(
-                ord_num=json["ord_num"], status=0
-            ).first()
+            orders = json["ord_num"]
             subject = json["subject"]
             return_url = json["return_url"]
             wap = json["wap"]
         except KeyError:
             return {"error": "Lack necessary argument"}, 406
 
-        if order is None:
-            return {"error": "Order not found"}, 404
+        price = 0
+        for order in orders:
+            order = TrusteeshipOrder.query.filter_by(
+                ord_num=order, status=0
+            ).first()
+            if order is None:
+                return {"error": f"Order num {order} not found"}, 404
+            price += order.price
         
         if wap:
             sig = self.alipay.api_alipay_trade_wap_pay(
-                out_trade_no=order.ord_num,
+                out_trade_no=orders[0],
                 subject=subject,
-                total_amount=order.price,
+                total_amount=price,
                 return_url=return_url
             )
         else:
             sig = self.alipay.api_alipay_trade_page_pay(
-                out_trade_no=order.ord_num,
+                out_trade_no=orders[0],
                 subject=subject,
-                total_amount=order.price,
+                total_amount=price,
                 return_url=return_url
             )
         return {
