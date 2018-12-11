@@ -90,7 +90,7 @@ class AgencyAPI(Resource):
                     ]
                 agency_list[i]["img_list"] = [
                     {"src": srcs[i], "id": i, "show": False} for i in range(3)
-                    ]   
+                    ]
             return {"agency_list": agency_list}, 200
         agency = Agency.query.get(int(args["id"]))
         if agency is None:
