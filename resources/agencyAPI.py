@@ -86,10 +86,11 @@ class AgencyAPI(Resource):
                 srcs = [
                     "http://itsyuekao.com:5000/_uploads/IMAGE/mmexport1544506377152.jpg",
                     "http://itsyuekao.com:5000/_uploads/IMAGE/mmexport1544506379151.jpg",
-                    "http://itsyuekao.com:5000/_uploads/IMAGE/mmexport1544506380445.jpg"
+                    "http://itsyuekao.com:5000/_uploads/IMAGE/mmexport1544506380445.jpg",
+                    "http://itsyuekao.com:5000/_uploads/IMAGE/mmexport1544508266566.jpg"
                     ]
                 agency_list[i]["img_list"] = [
-                    {"src": srcs[i], "id": i, "show": False} for i in range(3)
+                    {"src": srcs[i], "id": i, "show": False} for i in range(4)
                     ]
             return {"agency_list": agency_list}, 200
         agency = Agency.query.get(int(args["id"]))
