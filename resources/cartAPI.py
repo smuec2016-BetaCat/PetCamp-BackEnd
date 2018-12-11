@@ -4,6 +4,7 @@ from flask_restful import Resource
 from resources.authAPI import verify_admin
 from models.trusteeshipOrder import TrusteeshipOrder, db
 from models.image import Image
+from models.agency import Agency
 from models.base import to_dict
 from datetime import datetime
 from resources.authAPI import auth
@@ -73,8 +74,10 @@ class CartAPI(Resource):
             ).all()
         
         for i in range(len(orders)):
+            agency = Agency.query.filter_by(id=orders[i].agency_id).first()
             orders[i] = to_dict(orders[i])
             orders[i]["checked"] = True
+            orders[i]["agency_name"] = agency.name
         return {"orders": orders}, 200
 
     @staticmethod
