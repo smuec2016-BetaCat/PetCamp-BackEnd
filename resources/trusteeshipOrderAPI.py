@@ -1,14 +1,17 @@
-from flask import request
+from flask import request, g
 from flask_restful import Resource
 from models.trusteeshipOrder import TrusteeshipOrder, db
 from models.base import to_dict
 from datetime import datetime
+from resources.authAPI import auth
 
 
 class TrusteeshipOrderAPI(Resource):
     """
     Trusteeship order API
     """
+    decorators = [auth.login_required]
+
     @staticmethod
     def put():
         """
@@ -24,8 +27,11 @@ class TrusteeshipOrderAPI(Resource):
             return {"error": "Order not found"}, 404
         try:
             order.agency_fee = json["agency_fee"]
+            assert g.current_user.own_agent_id == order.agency_id
         except KeyError:
             return {"error": "Agency fee is not provided"}, 406
+        except AssertionError:
+            return {"error": "Authorization problem"}, 401
         order.status = 2
         order.close_time = datetime.now()
         db.session.commit()

@@ -1,7 +1,6 @@
 from flask import request
 from flask_restful import Resource
 from models.counter import Counter, db
-# from resources.authAPI import auth
 import datetime
 
 
@@ -9,8 +8,6 @@ class CounterAPI(Resource):
     """
     Counter API
     """
-    # decorators = [auth.login_required]
-
     @staticmethod
     def get():
         """
@@ -50,12 +47,3 @@ class CounterAPI(Resource):
                 )
         return {"count": count}, 201
 
-    @staticmethod
-    def delete():
-        """
-        Clear all records in the datatable
-        :return: The number of deleted rows
-        """
-        deleted_rows = Counter.query.delete()
-        db.session.commit()
-        return {"deleted_rows": deleted_rows}, 205
