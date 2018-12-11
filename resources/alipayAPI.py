@@ -40,14 +40,14 @@ class AliPayAPI(Resource):
         
         if wap:
             sig = self.alipay.api_alipay_trade_wap_pay(
-                out_trade_no=orders[0],
+                out_trade_no="&".join(orders),
                 subject=subject,
                 total_amount=price,
                 return_url=return_url
             )
         else:
             sig = self.alipay.api_alipay_trade_page_pay(
-                out_trade_no=orders[0],
+                out_trade_no="&".join(orders),
                 subject=subject,
                 total_amount=price,
                 return_url=return_url
@@ -58,10 +58,12 @@ class AliPayAPI(Resource):
 
     @staticmethod
     def post():
-        ord_num = request.form["out_trade_no"]
-        order = TrusteeshipOrder.query.filter_by(
-            ord_num=ord_num, status=0
-        ).first()
-        order.status = 1
-        order.open_time = datetime.now()
-        db.session.commit()
+        out_trade_no = request.form["out_trade_no"]
+        orders = out_trade_no.split("&")
+        for ord_num in orders:
+            order = TrusteeshipOrder.query.filter_by(
+                ord_num=ord_num, status=0
+            ).first()
+            order.status = 1
+            order.open_time = datetime.now()
+            db.session.commit()

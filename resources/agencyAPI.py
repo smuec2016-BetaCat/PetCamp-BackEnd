@@ -5,9 +5,12 @@ from models.agency import Agency, db
 from models.user import User
 from models.base import to_dict
 from datetime import datetime
+from resources.authAPI import auth
 
 
 class AgencyAPI(Resource):
+    decorators = [auth.login_required]
+
     @staticmethod
     def post():
         """
@@ -44,29 +47,6 @@ class AgencyAPI(Resource):
         manager.own_agent_id = agency.id
         db.session.commit()
         return {"msg": "Success"}, 201
-
-    # @staticmethod
-    # def put():
-    #     """
-    #     image for agency
-    #     """
-    #     json = request.get_json()
-    #     try:
-    #         certification = json["certification"]
-    #         id = json["id"]
-    #     except KeyError:
-    #         return {"error": "Lack necessary argument"}, 406
-
-    #     if g.current_user.own_agent_id != id and not verify_admin():
-    #         return {"error": "Authorization problem"}, 401
-
-    #     agency = Agency.query.filter_by(id=id).first()
-    #     if agency is None:
-    #         return {"error": "Agency not found"}, 404
-    #     agency.certification = certification
-    #     agency.last_update = datetime.now()
-    #     db.session.commit()
-    #     return {"msg": "Success"}, 200
 
     @staticmethod
     def get():

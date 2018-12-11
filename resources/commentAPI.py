@@ -4,12 +4,15 @@ from models.comment import Comment, db
 from models.user import User
 from models.base import to_dict
 from datetime import datetime
+from resources.authAPI import auth
 
 
 class CommentAPI(Resource):
     """
     Comment API
     """
+    decorators = [auth.login_required]
+
     @staticmethod
     def post():
         """
