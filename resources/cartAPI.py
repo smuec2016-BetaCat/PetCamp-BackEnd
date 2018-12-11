@@ -6,12 +6,15 @@ from models.trusteeshipOrder import TrusteeshipOrder, db
 from models.image import Image
 from models.base import to_dict
 from datetime import datetime
+from resources.authAPI import auth
 
 
 class CartAPI(Resource):
     """
     Cart API
     """
+    decorators = [auth.login_required]
+
     @staticmethod
     def post():
         """
@@ -33,14 +36,12 @@ class CartAPI(Resource):
                 comment=json["comment"],
                 price=json["price"],
                 create_time=datetime.now(),
-                agency_id=json["agency_id"],
-                user_id=json["user_id"]
+                agency_id=json["agency_id"]
             )
         except KeyError:
             return {"error": "Lack necessary argument"}, 406
 
-        if g.current_user.id != manager_id and verify_admin() == False:
-            return {"error": "Authorization problem"}, 401
+        order.user_id = g.current_user.id
 
         ord_num = str(
             order.create_time.strftime("%Y%m%d%H%M%S")
@@ -66,21 +67,10 @@ class CartAPI(Resource):
         Get cart orders
         :return: orders or error message
         """
-        args = request.args
-        try:
-            assert args["user_id"] == g.current_user["id"]
-        except KeyError:
-            return {"error": "Token is not provided"}, 401
-        except AssertionError:
-            return {"error": "Authorization problem"}, 401
-
-        try:
-            orders = TrusteeshipOrder.query.filter_by(
-                user_id=args["user_id"],
-                status=0
-                ).all()
-        except KeyError:
-            return {"error": "Lack necessary argument"}, 406
+        orders = TrusteeshipOrder.query.filter_by(
+            user_id=g.current_user.id,
+            status=0
+            ).all()
         
         for i in range(len(orders)):
             orders[i] = to_dict(orders[i])
@@ -100,8 +90,11 @@ class CartAPI(Resource):
             ).first()
             if order is None:
                 return {"error": "Order not found"}, 404
+            assert order.user_id == g.current_user.id
         except KeyError:
             return {"error": "Agency fee is not provided"}, 406
+        except AssertionError:
+            return {"error": "Authorization problem"}, 401
         order.status = 1
         order.open_time = datetime.now()
         db.session.commit()
@@ -124,8 +117,11 @@ class CartAPI(Resource):
             ).first()
             if order is None:
                 return {"error": "Order not found"}, 404
+            assert order.user_id == g.current_user.id
         except KeyError:
             return {"error": "Agency fee is not provided"}, 406
+        except AssertionError:
+            return {"error": "Authorization problem"}, 401
         db.session.delete(order)
         db.session.commit()
         return {"msg": "Success"}, 200
