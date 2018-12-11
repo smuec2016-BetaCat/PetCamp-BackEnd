@@ -74,6 +74,7 @@ class CartAPI(Resource):
         
         for i in range(len(orders)):
             orders[i] = to_dict(orders[i])
+            orders[i]["checked"] = True
         return {"orders": orders}, 200
 
     @staticmethod
